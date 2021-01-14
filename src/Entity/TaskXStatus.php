@@ -32,6 +32,18 @@ class TaskXStatus
      */
     private $comment;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Task::class, inversedBy="taskXStatuses")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $task;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Status::class, inversedBy="taskXStatuses")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $status;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +81,30 @@ class TaskXStatus
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getTask(): ?Task
+    {
+        return $this->task;
+    }
+
+    public function setTask(?Task $task): self
+    {
+        $this->task = $task;
+
+        return $this;
+    }
+
+    public function getStatus(): ?Status
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?Status $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
