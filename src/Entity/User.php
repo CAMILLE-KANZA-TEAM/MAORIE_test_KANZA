@@ -71,9 +71,20 @@ class User implements UserInterface
      */
     private $tasks;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="userCreator")
+     */
+    private $userAdmin;
+
+    /**
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="userAdmin")
+     */
+    private $userCreator;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
+        $this->userCreator = new ArrayCollection();
     }
 
 
@@ -224,6 +235,48 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($task->getAuthor() === $this) {
                 $task->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUserAdmin(): ?self
+    {
+        return $this->userAdmin;
+    }
+
+    public function setUserAdmin(?self $userAdmin): self
+    {
+        $this->userAdmin = $userAdmin;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getUserCreator(): Collection
+    {
+        return $this->userCreator;
+    }
+
+    public function addUserCreator(self $userCreator): self
+    {
+        if (!$this->userCreator->contains($userCreator)) {
+            $this->userCreator[] = $userCreator;
+            $userCreator->setUserAdmin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserCreator(self $userCreator): self
+    {
+        if ($this->userCreator->removeElement($userCreator)) {
+            // set the owning side to null (unless already changed)
+            if ($userCreator->getUserAdmin() === $this) {
+                $userCreator->setUserAdmin(null);
             }
         }
 
