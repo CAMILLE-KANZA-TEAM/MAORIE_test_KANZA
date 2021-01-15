@@ -44,11 +44,6 @@ class Task
      */
     private $taskXStatuses;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="tasks")
-     */
-    private $author;
-
     public function __construct()
     {
         $this->taskXStatuses = new ArrayCollection();
@@ -133,18 +128,6 @@ class Task
                 $taskXStatus->setTask(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getAuthor(): ?User
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?User $author): self
-    {
-        $this->author = $author;
 
         return $this;
     }
