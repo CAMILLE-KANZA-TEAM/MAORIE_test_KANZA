@@ -39,14 +39,8 @@ class Status
      */
     private $updated;
 
-    /**
-     * @ORM\OneToMany(targetEntity=TaskXStatus::class, mappedBy="status", orphanRemoval=true)
-     */
-    private $taskXStatuses;
-
     public function __construct()
     {
-        $this->taskXStatuses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -98,36 +92,6 @@ class Status
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|TaskXStatus[]
-     */
-    public function getTaskXStatuses(): Collection
-    {
-        return $this->taskXStatuses;
-    }
-
-    public function addTaskXStatus(TaskXStatus $taskXStatus): self
-    {
-        if (!$this->taskXStatuses->contains($taskXStatus)) {
-            $this->taskXStatuses[] = $taskXStatus;
-            $taskXStatus->setStatus($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTaskXStatus(TaskXStatus $taskXStatus): self
-    {
-        if ($this->taskXStatuses->removeElement($taskXStatus)) {
-            // set the owning side to null (unless already changed)
-            if ($taskXStatus->getStatus() === $this) {
-                $taskXStatus->setStatus(null);
-            }
-        }
 
         return $this;
     }
