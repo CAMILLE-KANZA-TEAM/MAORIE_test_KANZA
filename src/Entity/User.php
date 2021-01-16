@@ -68,6 +68,11 @@ class User
      */
     private $photo;
 
+    /**
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     */
+    private $apiToken;
+
 
     public function getId(): ?int
     {
@@ -193,4 +198,17 @@ class User
 
         return $this;
     }
+
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
+
+        return $this;
+    }
+
 }
