@@ -11,6 +11,10 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * Class TaskFixtures
+ * @package App\DataFixtures
+ */
 class TaskFixtures extends Fixture implements DependentFixtureInterface
 {
 
