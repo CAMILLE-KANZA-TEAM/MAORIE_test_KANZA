@@ -40,14 +40,9 @@ class Task
     private $isActive;
 
     /**
-     * @ORM\OneToMany(targetEntity=TaskXStatus::class, mappedBy="task", orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity=TaskStatus::class, inversedBy="tasks")
      */
-    private $taskXStatuses;
-
-    public function __construct()
-    {
-        $this->taskXStatuses = new ArrayCollection();
-    }
+    private $status;
 
     public function getId(): ?int
     {
@@ -102,32 +97,14 @@ class Task
         return $this;
     }
 
-    /**
-     * @return Collection|TaskXStatus[]
-     */
-    public function getTaskXStatuses(): Collection
+    public function getStatus(): ?TaskStatus
     {
-        return $this->taskXStatuses;
+        return $this->status;
     }
 
-    public function addTaskXStatus(TaskXStatus $taskXStatus): self
+    public function setStatus(?TaskStatus $status): self
     {
-        if (!$this->taskXStatuses->contains($taskXStatus)) {
-            $this->taskXStatuses[] = $taskXStatus;
-            $taskXStatus->setTask($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTaskXStatus(TaskXStatus $taskXStatus): self
-    {
-        if ($this->taskXStatuses->removeElement($taskXStatus)) {
-            // set the owning side to null (unless already changed)
-            if ($taskXStatus->getTask() === $this) {
-                $taskXStatus->setTask(null);
-            }
-        }
+        $this->status = $status;
 
         return $this;
     }

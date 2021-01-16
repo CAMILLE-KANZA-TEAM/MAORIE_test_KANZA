@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\TaskXStatus;
+use App\Entity\TaskStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method TaskXStatus|null find($id, $lockMode = null, $lockVersion = null)
- * @method TaskXStatus|null findOneBy(array $criteria, array $orderBy = null)
- * @method TaskXStatus[]    findAll()
- * @method TaskXStatus[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method TaskStatus|null find($id, $lockMode = null, $lockVersion = null)
+ * @method TaskStatus|null findOneBy(array $criteria, array $orderBy = null)
+ * @method TaskStatus[]    findAll()
+ * @method TaskStatus[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TaskXStatusRepository extends ServiceEntityRepository
+class TaskStatusRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TaskXStatus::class);
+        parent::__construct($registry, TaskStatus::class);
     }
 
     // /**
-    //  * @return TaskXStatus[] Returns an array of TaskXStatus objects
+    //  * @return TaskStatus[] Returns an array of TaskStatus objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class TaskXStatusRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?TaskXStatus
+    public function findOneBySomeField($value): ?TaskStatus
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.exampleField = :val')
