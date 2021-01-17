@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Task;
 use App\Entity\User;
+use App\Repository\TaskCategoryRepository;
 use App\Repository\TaskStatusRepository;
 use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -31,13 +32,21 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
     private TaskStatusRepository $taskStatusRepository;
 
     /**
+     * @var TaskCategoryRepository
+     */
+    private TaskCategoryRepository $taskCategoryRepository;
+
+    /**
      * TaskFixtures constructor.
      * @param UserRepository $userRepository
+     * @param TaskStatusRepository $taskStatusRepository
+     * @param TaskCategoryRepository $taskCategoryRepository
      */
-    public function __construct(UserRepository $userRepository, TaskStatusRepository $taskStatusRepository)
+    public function __construct(UserRepository $userRepository, TaskStatusRepository $taskStatusRepository, TaskCategoryRepository $taskCategoryRepository)
     {
         $this->userRepository = $userRepository;
         $this->taskStatusRepository = $taskStatusRepository;
+        $this->taskCategoryRepository = $taskCategoryRepository;
     }
 
     /**
@@ -46,15 +55,19 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager)
     {
 
-        $listUsers = $this->userRepository->findAll();
-        $listStatus = $this->taskStatusRepository->findAll();
+        $listUsers    = $this->userRepository->findAll();
+        $listStatus   = $this->taskStatusRepository->findAll();
+        $listCategory = $this->taskCategoryRepository->findAll();
 
-        $randomUser = $this->_getRandomUser($listUsers);
-        $randomStatus = $this->_getRandomStatus($listStatus);
+        $randomUser     = $this->_getRandomUser($listUsers);
+        $randomStatus   = $this->_getRandomStatus($listStatus);
+        $randomCategory = $this->_getRandomStatus($listCategory);
+
         $task = new Task();
         $task
-            ->setName("test")
-            ->setStatus($randomStatus)
+            ->setName("task 1")
+            ->setTaskStatus($randomStatus)
+            ->setTaskCategory($randomCategory)
             ->setOwner($randomUser)
             ->setIsActive(1)
             ->setCreated(new \DateTime())
@@ -62,19 +75,23 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($task);
         $manager->flush();
 
-        $randomUser = $this->_getRandomUser($listUsers);
-        $randomStatus = $this->_getRandomStatus($listStatus);
+
+
+        $randomUser     = $this->_getRandomUser($listUsers);
+        $randomStatus   = $this->_getRandomStatus($listStatus);
+        $randomCategory = $this->_getRandomStatus($listCategory);
+
         $task = new Task();
         $task
-            ->setName("test2")
-            ->setIsActive(1)
-            ->setStatus($randomStatus)
+            ->setName("task 2")
+            ->setTaskStatus($randomStatus)
+            ->setTaskCategory($randomCategory)
             ->setOwner($randomUser)
+            ->setIsActive(1)
             ->setCreated(new \DateTime())
             ->setUpdated(new \DateTime());
         $manager->persist($task);
         $manager->flush();
-
     }
 
     /**
@@ -100,6 +117,7 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         return array(
             UserFixtures::class,
             TaskStatusFixtures::class,
+            TaskCategoryFixtures::class,
         );
     }
 
