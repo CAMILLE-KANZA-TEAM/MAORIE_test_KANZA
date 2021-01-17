@@ -19,6 +19,57 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function getData($userId = '', $filterBy = '', $groupBy = '')
+    {
+
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder->innerJoin('u.category', 'c');
+
+        if ($userId) {
+            $queryBuilder->andWhere('u.id = :userId');
+            $queryBuilder->setParameter('userId', $userId);
+        }
+
+
+        switch ($filterBy) {
+
+            case 'dateCreation':
+                //$queryBuilder
+                //->andWhere('p.author = :author')
+                //->setParameter('author', $user)
+                //->andWhere('p.lastEvents=1')
+                //->andWhere('p.isAffected=1')
+                ;
+                break;
+
+            default:
+                break;
+        }
+
+        switch ($groupBy) {
+            case 'category':
+                /*
+                $queryBuilder->groupBy('c.id')
+                    ->setParameter('author', $user)
+                    ->andWhere('p.lastEvents=1')
+                    ->andWhere('p.isAffected=1')
+
+                ;
+                */
+                break;
+
+            default:
+                break;
+        }
+
+        return $queryBuilder->orderBy('u.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */
