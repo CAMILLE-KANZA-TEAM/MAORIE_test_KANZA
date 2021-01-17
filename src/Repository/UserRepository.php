@@ -23,7 +23,7 @@ class UserRepository extends ServiceEntityRepository
     {
 
         $queryBuilder = $this->createQueryBuilder('u');
-        $queryBuilder->innerJoin('u.category', 'c');
+        $queryBuilder->leftJoin('u.category', 'c');
 
         if ($userId) {
             $queryBuilder->andWhere('u.id = :userId');

@@ -59,9 +59,9 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
         $listStatus   = $this->taskStatusRepository->findAll();
         $listCategory = $this->taskCategoryRepository->findAll();
 
-        $randomUser     = $this->_getRandomUser($listUsers);
-        $randomStatus   = $this->_getRandomStatus($listStatus);
-        $randomCategory = $this->_getRandomStatus($listCategory);
+        $randomUser     = $this->_getRandomList($listUsers);
+        $randomStatus   = $this->_getRandomList($listStatus);
+        $randomCategory = $this->_getRandomList($listCategory);
 
         $task = new Task();
         $task
@@ -77,9 +77,9 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
 
 
 
-        $randomUser     = $this->_getRandomUser($listUsers);
-        $randomStatus   = $this->_getRandomStatus($listStatus);
-        $randomCategory = $this->_getRandomStatus($listCategory);
+        $randomUser     = $this->_getRandomList($listUsers);
+        $randomStatus   = $this->_getRandomList($listStatus);
+        $randomCategory = $this->_getRandomList($listCategory);
 
         $task = new Task();
         $task
@@ -107,9 +107,13 @@ class TaskFixtures extends Fixture implements DependentFixtureInterface
      * @param $listStatus
      * @return mixed
      */
-    private function _getRandomStatus($listStatus)
+    private function _getRandomList($listStatus)
     {
-        return $listStatus[rand(0, count($listStatus) - 1)];
+        $ret = null;
+        if(is_array($listStatus)) {
+            $ret = $listStatus[rand(0, count($listStatus) - 1)];
+        }
+        return $ret;
     }
 
     public function getDependencies()
