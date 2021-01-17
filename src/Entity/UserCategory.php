@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=UserCategoryRepository::class)
  */
-class UserCategory
+class UserCategory implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -130,5 +130,19 @@ class UserCategory
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'isActive' => $this->getIsActive(),
+            'created' => $this->getCreated() ? $this->getCreated()->format('Y-m-d H:i:s') : NULL,
+            'updated' => $this->getUpdated() ? $this->getUpdated()->format('Y-m-d H:i:s') : NULL,
+        ];
     }
 }

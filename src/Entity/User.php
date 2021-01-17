@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
-class User implements \JsonSerializable,UserInterface
+class User implements \JsonSerializable, UserInterface
 {
     /**
      * @ORM\Id
@@ -186,15 +186,15 @@ class User implements \JsonSerializable,UserInterface
     public function jsonSerialize()
     {
         return [
-            'id'        => $this->getId(),
-            'civility'  => $this->getCivility(),
-            'username'  => $this->getUsername(),
-            //'password'  => $this->getPassword(),
-            'isActive'  => $this->getIsActive(),
-            'email'     => $this->getEmail(),
-            'role'      => $this->getRoles(),
-            'created'   => $this->getCreated()?$this->getCreated()->format('Y-m-d H:i:s'):NULL,
-            'updated'   => $this->getUpdated()?$this->getUpdated()->format('Y-m-d H:i:s'):NULL,
+            'id' => $this->getId(),
+            'civility' => $this->getCivility(),
+            'username' => $this->getUsername(),
+            'isActive' => $this->getIsActive(),
+            'email' => $this->getEmail(),
+            'role' => $this->getRoles(),
+            'userCategory' => !empty($category = $this->getCategory()) ? $category : [],
+            'created' => $this->getCreated() ? $this->getCreated()->format('Y-m-d H:i:s') : NULL,
+            'updated' => $this->getUpdated() ? $this->getUpdated()->format('Y-m-d H:i:s') : NULL,
         ];
     }
 
