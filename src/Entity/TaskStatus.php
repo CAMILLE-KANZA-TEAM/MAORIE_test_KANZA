@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\TaskCategoryRepository;
+use App\Repository\TaskStatusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=TaskCategoryRepository::class)
+ * @ORM\Entity(repositoryClass=TaskStatusRepository::class)
  */
-class TaskCategory
+class TaskStatus
 {
     /**
      * @ORM\Id
@@ -20,14 +20,9 @@ class TaskCategory
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", nullable=true)
      */
     private $name;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $created;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -35,14 +30,23 @@ class TaskCategory
     private $updated;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isActive;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="taskCategory")
+     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="status")
      */
     private $tasks;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $value;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created;
+
+    const TASK_ON = '1';
+    const TASK_WAITING = '2';
+    const TASK_DONE = '3';
 
     public function __construct()
     {
@@ -66,18 +70,6 @@ class TaskCategory
         return $this;
     }
 
-    public function getCreated(): ?\DateTimeInterface
-    {
-        return $this->created;
-    }
-
-    public function setCreated(?\DateTimeInterface $created): self
-    {
-        $this->created = $created;
-
-        return $this;
-    }
-
     public function getUpdated(): ?\DateTimeInterface
     {
         return $this->updated;
@@ -86,18 +78,6 @@ class TaskCategory
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
-
-        return $this;
-    }
-
-    public function getIsActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
 
         return $this;
     }
@@ -114,7 +94,7 @@ class TaskCategory
     {
         if (!$this->tasks->contains($task)) {
             $this->tasks[] = $task;
-            $task->setTaskCategory($this);
+            $task->setStatus($this);
         }
 
         return $this;
@@ -124,10 +104,34 @@ class TaskCategory
     {
         if ($this->tasks->removeElement($task)) {
             // set the owning side to null (unless already changed)
-            if ($task->getTaskCategory() === $this) {
-                $task->setTaskCategory(null);
+            if ($task->getStatus() === $this) {
+                $task->setStatus(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getValue(): ?int
+    {
+        return $this->value;
+    }
+
+    public function setValue(int $value): self
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function setCreated(?\DateTimeInterface $created): self
+    {
+        $this->created = $created;
 
         return $this;
     }

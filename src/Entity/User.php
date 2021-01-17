@@ -4,12 +4,13 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
-class User
+class User implements \JsonSerializable,UserInterface
 {
     /**
      * @ORM\Id
@@ -59,14 +60,14 @@ class User
     private $email;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $enable;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $photo;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=UserCategory::class, inversedBy="users")
+     */
+    private $category;
 
 
     public function getId(): ?int
@@ -170,18 +171,6 @@ class User
         return $this;
     }
 
-    public function getEnable(): ?bool
-    {
-        return $this->enable;
-    }
-
-    public function setEnable(?bool $enable): self
-    {
-        $this->enable = $enable;
-
-        return $this;
-    }
-
     public function getPhoto(): ?string
     {
         return $this->photo;
@@ -190,6 +179,43 @@ class User
     public function setPhoto(?string $photo): self
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id'        => $this->getId(),
+            'civility'  => $this->getCivility(),
+            'username'  => $this->getUsername(),
+            //'password'  => $this->getPassword(),
+            'isActive'  => $this->getIsActive(),
+            'email'     => $this->getEmail(),
+            'role'      => $this->getRoles(),
+            'created'   => $this->getCreated()?$this->getCreated()->format('Y-m-d H:i:s'):NULL,
+            'updated'   => $this->getUpdated()?$this->getUpdated()->format('Y-m-d H:i:s'):NULL,
+        ];
+    }
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getCategory(): ?UserCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?UserCategory $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

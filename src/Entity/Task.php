@@ -40,14 +40,20 @@ class Task
     private $isActive;
 
     /**
-     * @ORM\OneToMany(targetEntity=TaskXStatus::class, mappedBy="task", orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity=User::class)
      */
-    private $taskXStatuses;
+    private $owner;
 
-    public function __construct()
-    {
-        $this->taskXStatuses = new ArrayCollection();
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity=TaskCategory::class, inversedBy="tasks")
+     */
+    private $taskCategory;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=TaskStatus::class)
+     */
+    private $taskStatus;
+
 
     public function getId(): ?int
     {
@@ -102,32 +108,38 @@ class Task
         return $this;
     }
 
-    /**
-     * @return Collection|TaskXStatus[]
-     */
-    public function getTaskXStatuses(): Collection
+    public function getOwner(): ?User
     {
-        return $this->taskXStatuses;
+        return $this->owner;
     }
 
-    public function addTaskXStatus(TaskXStatus $taskXStatus): self
+    public function setOwner(?User $owner): self
     {
-        if (!$this->taskXStatuses->contains($taskXStatus)) {
-            $this->taskXStatuses[] = $taskXStatus;
-            $taskXStatus->setTask($this);
-        }
+        $this->owner = $owner;
 
         return $this;
     }
 
-    public function removeTaskXStatus(TaskXStatus $taskXStatus): self
+    public function getTaskCategory(): ?TaskCategory
     {
-        if ($this->taskXStatuses->removeElement($taskXStatus)) {
-            // set the owning side to null (unless already changed)
-            if ($taskXStatus->getTask() === $this) {
-                $taskXStatus->setTask(null);
-            }
-        }
+        return $this->taskCategory;
+    }
+
+    public function setTaskCategory(?TaskCategory $taskCategory): self
+    {
+        $this->taskCategory = $taskCategory;
+
+        return $this;
+    }
+
+    public function getTaskStatus(): ?TaskStatus
+    {
+        return $this->taskStatus;
+    }
+
+    public function setTaskStatus(?TaskStatus $taskStatus): self
+    {
+        $this->taskStatus = $taskStatus;
 
         return $this;
     }
