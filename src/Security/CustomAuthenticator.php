@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Services\Api\ApiTokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,19 +36,21 @@ class CustomAuthenticator extends AbstractFormLoginAuthenticator implements Pass
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $apiTokenGenerator;
 
     /**
      * @var UserRepository
      */
     private UserRepository $userRepository;
 
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(UserRepository $userRepository, ApiTokenGenerator $apiTokenGenerator, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
     {
-        $this->entityManager = $entityManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->passwordEncoder = $passwordEncoder;
-        $this->userRepository = $userRepository;
+        $this->entityManager     = $entityManager;
+        $this->urlGenerator      = $urlGenerator;
+        $this->csrfTokenManager  = $csrfTokenManager;
+        $this->passwordEncoder   = $passwordEncoder;
+        $this->userRepository    = $userRepository;
+        $this->apiTokenGenerator = $apiTokenGenerator;
     }
 
     public function supports(Request $request)
@@ -57,6 +60,11 @@ class CustomAuthenticator extends AbstractFormLoginAuthenticator implements Pass
 
     public function getCredentials(Request $request)
     {
+        if (!$token = $request->headers->get('X-AUTH-TOKEN')) {
+
+        }
+
+
         $credentials = [
             'email'     => $request->request->get("email"),
             'password'  => $request->request->get("password")
@@ -103,20 +111,6 @@ class CustomAuthenticator extends AbstractFormLoginAuthenticator implements Pass
     }
 
     /**
-     * @param Request $request
-     * @param TokenInterface $token
-     * @param string $providerKey
-     * @return RedirectResponse|null
-     */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
-    {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-            return new RedirectResponse($targetPath);
-        }
-        return null;
-    }
-
-    /**
      * @param UserInterface $user
      * @param string $providerKey
      * @return \Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken|void
@@ -139,6 +133,26 @@ class CustomAuthenticator extends AbstractFormLoginAuthenticator implements Pass
     {
         return new Response('Authentication Failure', 401);
     }
+
+    /**
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): Response
+    {
+        return new Response('Authentication Success', 401);
+    }
+    **/
+
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $providerKey
+     * @return RedirectResponse|null
+     */
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    {
+        $token = $this->apiTokenGenerator->generateToken($token->getUser());
+        return new Response(json_encode(['apiToken' => $token]), 201);
+    }
+
 
     /**
      * @return string
