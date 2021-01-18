@@ -19,32 +19,43 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param string $userId
+     * @param string $sort
+     * @param string $order
+     * @param string $entity
+     * @param string $groupBy
+     * @return int|mixed|string
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getData($userId = '', $sort = '', $order='', $entity='u', $groupBy = '')
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $entityPrefix = 'u.';
+        if ($entity && $entity == 'category') {
+            $entityPrefix = 'c.';
+        }
 
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder->leftJoin('u.category', 'c');
+
+        if ($userId) {
+            $queryBuilder->andWhere('u.id = :userId');
+            $queryBuilder->setParameter('userId', $userId);
+        }
+
+        if ($sort && $order) {
+            $queryBuilder->orderBy($entityPrefix.$sort, $order);
+        }
+
+        if ($groupBy) {
+            $queryBuilder->groupBy($groupBy);
+        }
+
+        if ($userId) {
+            return $queryBuilder->getQuery()->getOneOrNullResult();
+        } else {
+            return $queryBuilder->getQuery()->getResult();
+        }
+
     }
-    */
 }

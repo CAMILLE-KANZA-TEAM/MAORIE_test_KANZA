@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -12,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
-class User implements UserInterface
+class User implements \JsonSerializable, UserInterface
 {
     /**
      * @ORM\Id
@@ -67,25 +65,9 @@ class User implements UserInterface
     private $photo;
 
     /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="author")
+     * @ORM\ManyToOne(targetEntity=UserCategory::class, inversedBy="users")
      */
-    private $tasks;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="userCreator")
-     */
-    private $userAdmin;
-
-    /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="userAdmin")
-     */
-    private $userCreator;
-
-    public function __construct()
-    {
-        $this->tasks = new ArrayCollection();
-        $this->userCreator = new ArrayCollection();
-    }
+    private $category;
 
 
     public function getId(): ?int
@@ -201,6 +183,21 @@ class User implements UserInterface
         return $this;
     }
 
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'civility' => $this->getCivility(),
+            'username' => $this->getUsername(),
+            'isActive' => $this->getIsActive(),
+            'email' => $this->getEmail(),
+            'role' => $this->getRoles(),
+            'userCategory' => !empty($category = $this->getCategory()) ? $category : [],
+            'created' => $this->getCreated() ? $this->getCreated()->format('Y-m-d H:i:s') : NULL,
+            'updated' => $this->getUpdated() ? $this->getUpdated()->format('Y-m-d H:i:s') : NULL,
+        ];
+    }
+
     public function getSalt()
     {
         // TODO: Implement getSalt() method.
@@ -211,74 +208,14 @@ class User implements UserInterface
         // TODO: Implement eraseCredentials() method.
     }
 
-    /**
-     * @return Collection|Task[]
-     */
-    public function getTasks(): Collection
+    public function getCategory(): ?UserCategory
     {
-        return $this->tasks;
+        return $this->category;
     }
 
-    public function addTask(Task $task): self
+    public function setCategory(?UserCategory $category): self
     {
-        if (!$this->tasks->contains($task)) {
-            $this->tasks[] = $task;
-            $task->setAuthor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTask(Task $task): self
-    {
-        if ($this->tasks->removeElement($task)) {
-            // set the owning side to null (unless already changed)
-            if ($task->getAuthor() === $this) {
-                $task->setAuthor(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getUserAdmin(): ?self
-    {
-        return $this->userAdmin;
-    }
-
-    public function setUserAdmin(?self $userAdmin): self
-    {
-        $this->userAdmin = $userAdmin;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|self[]
-     */
-    public function getUserCreator(): Collection
-    {
-        return $this->userCreator;
-    }
-
-    public function addUserCreator(self $userCreator): self
-    {
-        if (!$this->userCreator->contains($userCreator)) {
-            $this->userCreator[] = $userCreator;
-            $userCreator->setUserAdmin($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserCreator(self $userCreator): self
-    {
-        if ($this->userCreator->removeElement($userCreator)) {
-            // set the owning side to null (unless already changed)
-            if ($userCreator->getUserAdmin() === $this) {
-                $userCreator->setUserAdmin(null);
-            }
-        }
+        $this->category = $category;
 
         return $this;
     }

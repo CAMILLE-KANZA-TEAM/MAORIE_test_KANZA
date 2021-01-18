@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\UserCategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=UserCategoryRepository::class)
  */
-class UserCategory
+class UserCategory implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -36,6 +38,16 @@ class UserCategory
      * @ORM\Column(type="boolean")
      */
     private $isActive;
+
+    /**
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="category")
+     */
+    private $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -88,5 +100,49 @@ class UserCategory
         $this->isActive = $isActive;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getCategory() === $this) {
+                $user->setCategory(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'isActive' => $this->getIsActive(),
+            'created' => $this->getCreated() ? $this->getCreated()->format('Y-m-d H:i:s') : NULL,
+            'updated' => $this->getUpdated() ? $this->getUpdated()->format('Y-m-d H:i:s') : NULL,
+        ];
     }
 }
