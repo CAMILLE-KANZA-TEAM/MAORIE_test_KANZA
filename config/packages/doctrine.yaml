@@ -3,6 +3,8 @@ doctrine:
         driver: 'pdo_pgsql'
         dbname: '%env(DB_NAME)%'
         host: '%env(DB_HOST)%'
+        options:
+            search_path: public
         #port: ~
         user: '%env(DB_USER)%'
         password: '%env(DB_PASSWORD)%'
