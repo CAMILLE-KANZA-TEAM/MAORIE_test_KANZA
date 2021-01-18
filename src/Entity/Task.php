@@ -1,128 +1,146 @@
 <?php
 
-namespace App\DataFixtures;
+namespace App\Entity;
 
-use App\Entity\Task;
-use App\Entity\User;
-use App\Repository\TaskCategoryRepository;
-use App\Repository\TaskStatusRepository;
-use App\Repository\UserRepository;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Repository\TaskRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class TaskFixtures
- * @package App\DataFixtures
+ * @ORM\Entity(repositoryClass=TaskRepository::class)
  */
-class TaskFixtures extends Fixture implements DependentFixtureInterface
+class Task
 {
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
     /**
-     * @var UserRepository
+     * @ORM\Column(type="string", length=255)
      */
-    private UserRepository $userRepository;
-
-
-    /**
-     * @var TaskStatusRepository
-     */
-    private TaskStatusRepository $taskStatusRepository;
+    private $name;
 
     /**
-     * @var TaskCategoryRepository
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    private TaskCategoryRepository $taskCategoryRepository;
+    private $created;
 
     /**
-     * TaskFixtures constructor.
-     * @param UserRepository $userRepository
-     * @param TaskStatusRepository $taskStatusRepository
-     * @param TaskCategoryRepository $taskCategoryRepository
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    public function __construct(UserRepository $userRepository, TaskStatusRepository $taskStatusRepository, TaskCategoryRepository $taskCategoryRepository)
+    private $updated;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isActive;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     */
+    private $owner;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=TaskCategory::class, inversedBy="tasks")
+     */
+    private $taskCategory;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=TaskStatus::class)
+     */
+    private $taskStatus;
+
+
+    public function getId(): ?int
     {
-        $this->userRepository = $userRepository;
-        $this->taskStatusRepository = $taskStatusRepository;
-        $this->taskCategoryRepository = $taskCategoryRepository;
+        return $this->id;
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
-    public function load(ObjectManager $manager)
+    public function getName(): ?string
     {
-
-        $listUsers    = $this->userRepository->findAll();
-        $listStatus   = $this->taskStatusRepository->findAll();
-        $listCategory = $this->taskCategoryRepository->findAll();
-
-        $randomUser     = $this->_getRandomList($listUsers);
-        $randomStatus   = $this->_getRandomList($listStatus);
-        $randomCategory = $this->_getRandomList($listCategory);
-
-        $task = new Task();
-        $task
-            ->setName("task 1")
-            ->setTaskStatus($randomStatus)
-            ->setTaskCategory($randomCategory)
-            ->setOwner($randomUser)
-            ->setIsActive(1)
-            ->setCreated(new \DateTime())
-            ->setUpdated(new \DateTime());
-        $manager->persist($task);
-        $manager->flush();
-
-
-
-        $randomUser     = $this->_getRandomList($listUsers);
-        $randomStatus   = $this->_getRandomList($listStatus);
-        $randomCategory = $this->_getRandomList($listCategory);
-
-        $task = new Task();
-        $task
-            ->setName("task 2")
-            ->setTaskStatus($randomStatus)
-            ->setTaskCategory($randomCategory)
-            ->setOwner($randomUser)
-            ->setIsActive(1)
-            ->setCreated(new \DateTime())
-            ->setUpdated(new \DateTime());
-        $manager->persist($task);
-        $manager->flush();
+        return $this->name;
     }
 
-    /**
-     * @param $listUsers
-     * @return mixed
-     */
-    private function _getRandomUser($listUsers)
+    public function setName(string $name): self
     {
-        return $listUsers[rand(0, count($listUsers) - 1)];
+        $this->name = $name;
+
+        return $this;
     }
 
-    /**
-     * @param $listStatus
-     * @return mixed
-     */
-    private function _getRandomList($listStatus)
+    public function getCreated(): ?\DateTimeInterface
     {
-        $ret = null;
-        if(is_array($listStatus)) {
-            $ret = $listStatus[rand(0, count($listStatus) - 1)];
-        }
-        return $ret;
+        return $this->created;
     }
 
-    public function getDependencies()
+    public function setCreated(?\DateTimeInterface $created): self
     {
-        return array(
-            UserFixtures::class,
-            TaskStatusFixtures::class,
-            TaskCategoryFixtures::class,
-        );
+        $this->created = $created;
+
+        return $this;
     }
 
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): self
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function getTaskCategory(): ?TaskCategory
+    {
+        return $this->taskCategory;
+    }
+
+    public function setTaskCategory(?TaskCategory $taskCategory): self
+    {
+        $this->taskCategory = $taskCategory;
+
+        return $this;
+    }
+
+    public function getTaskStatus(): ?TaskStatus
+    {
+        return $this->taskStatus;
+    }
+
+    public function setTaskStatus(?TaskStatus $taskStatus): self
+    {
+        $this->taskStatus = $taskStatus;
+
+        return $this;
+    }
 }
