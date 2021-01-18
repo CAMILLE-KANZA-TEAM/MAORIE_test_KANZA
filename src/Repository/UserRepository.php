@@ -19,8 +19,21 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function getData($userId = '', $filterBy = '', $groupBy = '')
+    /**
+     * @param string $userId
+     * @param string $sort
+     * @param string $order
+     * @param string $entity
+     * @param string $groupBy
+     * @return int|mixed|string
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getData($userId = '', $sort = '', $order='', $entity='u', $groupBy = '')
     {
+        $entityPrefix = 'u.';
+        if ($entity && $entity == 'category') {
+            $entityPrefix = 'c.';
+        }
 
         $queryBuilder = $this->createQueryBuilder('u');
         $queryBuilder->leftJoin('u.category', 'c');
@@ -30,72 +43,19 @@ class UserRepository extends ServiceEntityRepository
             $queryBuilder->setParameter('userId', $userId);
         }
 
-
-        switch ($filterBy) {
-
-            case 'dateCreation':
-                //$queryBuilder
-                //->andWhere('p.author = :author')
-                //->setParameter('author', $user)
-                //->andWhere('p.lastEvents=1')
-                //->andWhere('p.isAffected=1')
-                ;
-                break;
-
-            default:
-                break;
+        if ($sort && $order) {
+            $queryBuilder->orderBy($entityPrefix.$sort, $order);
         }
 
-        switch ($groupBy) {
-            case 'category':
-                /*
-                $queryBuilder->groupBy('c.id')
-                    ->setParameter('author', $user)
-                    ->andWhere('p.lastEvents=1')
-                    ->andWhere('p.isAffected=1')
-
-                ;
-                */
-                break;
-
-            default:
-                break;
+        if ($groupBy) {
+            $queryBuilder->groupBy($groupBy);
         }
 
-        return $queryBuilder->orderBy('u.id', 'DESC')
-            ->getQuery()
-            ->getResult();
-
-        return $result;
+        if ($userId) {
+            return $queryBuilder->getQuery()->getOneOrNullResult();
+        } else {
+            return $queryBuilder->getQuery()->getResult();
+        }
 
     }
-
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
