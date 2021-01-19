@@ -32,11 +32,11 @@ class CustomAuthenticator extends AbstractFormLoginAuthenticator implements Pass
 
     public const LOGIN_ROUTE = 'app_login_route';
 
-    private $entityManager;
-    private $urlGenerator;
-    private $csrfTokenManager;
-    private $passwordEncoder;
-    private $apiTokenGenerator;
+    private EntityManagerInterface $entityManager;
+    private UrlGeneratorInterface $urlGenerator;
+    private CsrfTokenManagerInterface $csrfTokenManager;
+    private UserPasswordEncoderInterface $passwordEncoder;
+    private ApiTokenGenerator $apiTokenGenerator;
 
     /**
      * @var UserRepository
@@ -53,18 +53,15 @@ class CustomAuthenticator extends AbstractFormLoginAuthenticator implements Pass
         $this->apiTokenGenerator = $apiTokenGenerator;
     }
 
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
+        //return false;
+        //echo $request->attributes->get('_route');die;
         return self::LOGIN_ROUTE === $request->attributes->get('_route') && $request->isMethod('POST');
     }
 
     public function getCredentials(Request $request)
     {
-        if (!$token = $request->headers->get('X-AUTH-TOKEN')) {
-
-        }
-
-
         $credentials = [
             'email'     => $request->request->get("email"),
             'password'  => $request->request->get("password")
@@ -133,13 +130,6 @@ class CustomAuthenticator extends AbstractFormLoginAuthenticator implements Pass
     {
         return new Response('Authentication Failure', 401);
     }
-
-    /**
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): Response
-    {
-        return new Response('Authentication Success', 401);
-    }
-    **/
 
     /**
      * @param Request $request

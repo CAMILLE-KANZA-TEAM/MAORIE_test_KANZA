@@ -61,6 +61,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 ->setUsername('user_' . $i)
                 ->setEmail('user_' . $i . '@email.com')
                 ->setPassword($password)
+                ->setApiToken('user_' . $i)
                 ->setCategory($randomUserCategory)
                 ->setRoles($role)
                 ->setIsActive(1)

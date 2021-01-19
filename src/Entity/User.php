@@ -69,6 +69,11 @@ class User implements \JsonSerializable, UserInterface
      */
     private $category;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $apiToken;
+
 
     public function getId(): ?int
     {
@@ -216,6 +221,18 @@ class User implements \JsonSerializable, UserInterface
     public function setCategory(?UserCategory $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(?string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
 
         return $this;
     }

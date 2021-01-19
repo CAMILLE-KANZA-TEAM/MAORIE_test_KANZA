@@ -1,14 +1,37 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    role_hierarchy:
+        ROLE_USER: ROLE_USER
+        ROLE_ADMIN: ROLE_ADMIN
+        ROLE_SUPER_ADMIN: ROLE_SUPER_ADMIN
+    providers:
+        token_provider:
+            entity:
+                class: App\Entity\User
+                property: email #property: apiToken
     encoders:
         App\Entity\User: bcrypt
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        api:
+            pattern: ^/api
+            stateless: true
+            guard:
+                authenticators:
+                    - App\Security\ApiKeyAuthenticator
         main:
-            anonymous: lazy
-            #provider: users_in_memory
+            stateless: false
+            anonymous: true
+            provider: token_provider
+            guard:
+                authenticators:
+                    - App\Security\CustomAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
