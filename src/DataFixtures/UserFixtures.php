@@ -12,6 +12,10 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * Class UserFixtures
+ * @package App\DataFixtures
+ */
 class UserFixtures extends Fixture implements DependentFixtureInterface
 {
 
@@ -61,6 +65,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 ->setUsername('user_' . $i)
                 ->setEmail('user_' . $i . '@email.com')
                 ->setPassword($password)
+                ->setApiToken('user_' . $i)
                 ->setCategory($randomUserCategory)
                 ->setRoles($role)
                 ->setIsActive(1)
