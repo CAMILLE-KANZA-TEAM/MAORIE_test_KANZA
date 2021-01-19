@@ -13,6 +13,10 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * Class UserCategoryFixtures
+ * @package App\DataFixtures
+ */
 class UserCategoryFixtures extends Fixture
 {
 

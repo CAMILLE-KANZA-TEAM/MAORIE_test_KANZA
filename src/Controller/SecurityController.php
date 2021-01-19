@@ -12,14 +12,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
 
-    protected User $userEntity;
-
-    public function __construct()
-    {
-
-    }
-
-
     /**
      * @Route("/loggon", name="app_login_route", methods={"POST"})
      */

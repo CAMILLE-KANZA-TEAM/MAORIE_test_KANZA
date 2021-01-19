@@ -22,6 +22,10 @@ use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ValidatorBuilder;
 
+/**
+ * Class ApiTokenGenerator
+ * @package App\Services\Api
+ */
 class ApiTokenGenerator
 {
     /**
@@ -45,6 +49,10 @@ class ApiTokenGenerator
         $this->em = $entity;
     }
 
+    /**
+     * @param User $user
+     * @return string
+     */
     public function generateToken(User $user)
     {
         $token = md5(uniqid('').time());

@@ -55,8 +55,6 @@ class CustomAuthenticator extends AbstractFormLoginAuthenticator implements Pass
 
     public function supports(Request $request): bool
     {
-        //return false;
-        //echo $request->attributes->get('_route');die;
         return self::LOGIN_ROUTE === $request->attributes->get('_route') && $request->isMethod('POST');
     }
 

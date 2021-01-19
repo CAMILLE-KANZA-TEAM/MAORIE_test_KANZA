@@ -188,6 +188,9 @@ class User implements \JsonSerializable, UserInterface
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         return [
@@ -203,21 +206,34 @@ class User implements \JsonSerializable, UserInterface
         ];
     }
 
+    /**
+     * @return string|void|null
+     */
     public function getSalt()
     {
         // TODO: Implement getSalt() method.
     }
 
+    /**
+     *
+     */
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
     }
 
+    /**
+     * @return UserCategory|null
+     */
     public function getCategory(): ?UserCategory
     {
         return $this->category;
     }
 
+    /**
+     * @param UserCategory|null $category
+     * @return $this
+     */
     public function setCategory(?UserCategory $category): self
     {
         $this->category = $category;
@@ -225,11 +241,18 @@ class User implements \JsonSerializable, UserInterface
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getApiToken(): ?string
     {
         return $this->apiToken;
     }
 
+    /**
+     * @param string|null $apiToken
+     * @return $this
+     */
     public function setApiToken(?string $apiToken): self
     {
         $this->apiToken = $apiToken;

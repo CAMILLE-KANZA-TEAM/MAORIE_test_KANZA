@@ -21,10 +21,16 @@ use Symfony\Component\Validator\ValidatorBuilder;
 
 class CheckFields
 {
+    /**
+     * @var ValidatorInterface
+     */
+    private ValidatorInterface $_validator;
 
-    private $_validator;
+    /**
+     * @var EntityManagerInterface
+     */
+    private EntityManagerInterface $_entityManager;
 
-    private $_entityManager;
 
     const EMPTY_VALUE = "L'adresse email est vide";
 
@@ -34,9 +40,12 @@ class CheckFields
 
     const MESSAGE_PASSWORD_EMPTY = "Le mot de passe est vide.";
 
-    const MESSAGE_PROFIL_EMPTY = "Le type de profil est vide";
 
-
+    /**
+     * CheckFields constructor.
+     * @param ValidatorInterface $validator
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(ValidatorInterface $validator, EntityManagerInterface $entityManager)
     {
         $this->_validator = $validator;
@@ -44,6 +53,10 @@ class CheckFields
     }
 
 
+    /**
+     * @param User $userEntity
+     * @return array
+     */
     public function isValidEntity(User $userEntity) {
 
         $return = [
@@ -69,6 +82,11 @@ class CheckFields
         return $return;
     }
 
+    /**
+     * @param $fieldToCheck
+     * @param $contraintInstance
+     * @return string|\Stringable|null
+     */
     private function _addConstraint($fieldToCheck, $contraintInstance)
     {
         $validate = $this->_validator->validate($fieldToCheck,$contraintInstance);

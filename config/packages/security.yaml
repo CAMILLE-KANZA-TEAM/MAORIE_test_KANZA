@@ -15,12 +15,12 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        api:
-            pattern: ^/api
-            stateless: true
-            guard:
-                authenticators:
-                    - App\Security\ApiKeyAuthenticator
+        #api:
+        #    pattern: ^/api
+        #    stateless: true
+        #    guard:
+        #        authenticators:
+        #            - App\Security\ApiKeyAuthenticator
         main:
             stateless: false
             anonymous: true
